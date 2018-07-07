@@ -62,7 +62,7 @@ public class FlownCount {
 		Job job = Job.getInstance();
 		
 //		jar包地址
-		job.setJar("D:/wc/FlownSum/FlownCount.jar");
+		job.setJar("D:/wc/FlownSum/FlownCount1.jar");
 		
 //		mapper和Reduce类
 		job.setMapperClass(FlownCountMapper.class);
@@ -79,6 +79,11 @@ public class FlownCount {
 //		输入输出路径
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		
+		
+//		分区reduce,以及指定reduce数量
+		job.setPartitionerClass(ProvicePartitioner.class);
+		job.setNumReduceTasks(5);
 		
 //		执行
 		boolean res = job.waitForCompletion(true);

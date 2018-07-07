@@ -8,6 +8,9 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import cn.itcast.bigdata.mr.wordcount.WordCountMapper;
+import cn.itcast.bigdata.mr.wordcount.WordCountReducer;
+
 /**
  * 相当于一个yarn集群的客户端
  * 需要在此封装我们的mr程序的相关运行参数，指定jar包
@@ -31,18 +34,27 @@ public class WordcountDriver {
 //		conf.set("HADOOP_USER_NAME", "hadoop");
 //		conf.set("dfs.permissions.enabled", "false");
 		
+		/*本地集群运行*/
+		conf.set("mapreduce.framework.name", "yarn");
+		conf.set("yarn.resourcemanager.hostname", "mini1");
+		conf.set("fs.defaultFS", "hdfs://mini1:9000/");
+//		conf.set("fs.defaultFS", "file:///");
 		
 		/*conf.set("mapreduce.framework.name", "yarn");
 		conf.set("yarn.resoucemanager.hostname", "mini1");*/
 		Job job = Job.getInstance(conf);
 		
 		/*job.setJar("/home/hadoop/wc.jar");*/
-		//指定本程序的jar包所在的本地路径
-		job.setJarByClass(WordcountDriver.class);
+		//指定本程序的jar包所在的路径
+//		job.setJarByClass(WordcountDriver.class);
+		
+		/*本地集群运行*/		
+		job.setJar("D:/wordcount.jar");
+		
 		
 		//指定本业务job要使用的mapper/Reducer业务类
-		job.setMapperClass(WordcountMapper.class);
-		job.setReducerClass(WordcountReducer.class);
+		job.setMapperClass(WordCountMapper.class);
+		job.setReducerClass(WordCountReducer.class);
 		
 		//指定mapper输出数据的kv类型
 		job.setMapOutputKeyClass(Text.class);
@@ -59,6 +71,7 @@ public class WordcountDriver {
 		
 		//将job中配置的相关参数，以及job所用的java类所在的jar包，提交给yarn去运行
 		/*job.submit();*/
+//		waitForCOmpletion会调用job.submit()
 		boolean res = job.waitForCompletion(true);
 		System.exit(res?0:1);
 		
@@ -66,3 +79,8 @@ public class WordcountDriver {
 	
 
 }
+
+
+
+
+

@@ -25,7 +25,17 @@ public class WordcountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 	/**
 	 * map阶段的业务逻辑就写在自定义的map()方法中
 	 * maptask会对每一行输入数据调用一次我们自定义的map()方法
+	 * 
+	 * key是一行起始偏移量，value是一行内容
 	 */
+	
+	/*	Java			hadoop
+	 * Long				LongWritable
+	 * String			Text
+	 * Integer			IntWritable
+	 * 
+	 */
+
 	@Override
 	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 		
@@ -37,6 +47,7 @@ public class WordcountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 		//将单词输出为<单词，1>
 		for(String word:words){
 			//将单词作为key，将次数1作为value，以便于后续的数据分发，可以根据单词分发，以便于相同单词会到相同的reduce task
+			// 从 Text->String,输出到Reduce，String-》Text
 			context.write(new Text(word), new IntWritable(1));
 		}
 	}
